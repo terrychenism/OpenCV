@@ -1,0 +1,104 @@
+//#include "stdafx.h"
+#include <cv.h>
+#include <cxcore.h>
+#include <highgui.h>		//程序所需的头文件
+
+//两个自定义的函数，用于实现图像的条件复制,效果见如下附图。
+IplImage *myCopyImage(IplImage* img, int Row, int Col, int Width, int Height);
+CvMat *myCopyMat(IplImage* img, int Row, int Col, int Width, int Height);
+
+/*主函数,它会调用本例程中的两个函数进行图像的剪切操作*/
+int main(int argc, char* argv[])
+{
+    //Step1：打开并显示原始图像，效果见图2啦~~    
+	IplImage *img = cvLoadImage("lena.jpg", -1);		//读取图像Koala.jpg
+    cvNamedWindow("Image:",1);						//创建一个图像窗口
+    cvShowImage("Image:",img);						//显示读取的图像
+	
+	//Step2：运用内部函数复制并显示复制后的图像，效果和图2一样，就是多了个窗口显示这幅图像，为了对比一下而已，所以就不费篇幅啦~~
+	IplImage *copy = cvCloneImage(img);				//调用内部函数复制图像
+	cvNamedWindow("Copy",1);							//创建一个图像窗口
+    cvShowImage("Copy",copy);							//显示复制的图像
+
+	//Step3：自己编写复制图像块函数，并显示复制的图像块（图像方式），剪切了起始位置（200,200），宽高（300,300）的图像，函数定义看最上面，实现看后面，效果见图3
+	IplImage *Block = myCopyImage(img,200,200,300,300);//自定义条件复制函数复制图像
+	if(Block)										//判断是否成功复制
+	{
+		cvNamedWindow("SubImage",1);					//创建一个图像窗口
+		cvShowImage("SubImage",Block);				//显示复制的图像块
+		cvWaitKey();									//等待键盘事件
+		cvDestroyWindow("SubImage");					//关闭图像窗口
+		cvReleaseImage(&Block);						//清除图像块
+	}
+	
+	//Step4：自己编写复制图像块函数，并显示复制的图像块（矩阵方式），和前面的效果是一样的，但是是对矩阵进行操作，显示的也是矩阵，效果还是图3的样子~~
+	CvMat *a = myCopyMat(img,200,200,300,300);		//自定义条件复制函数复制图像
+	if(a)											//判断是否成功复制
+	{
+		cvNamedWindow("Matrix",1);					//创建一个图像窗口
+		cvShowImage("Matrix",a);						//显示复制的图像块
+		cvWaitKey();									//等待键盘事件
+		cvDestroyWindow("Matrix");					//关闭图像窗口
+		cvReleaseMat(&a);							//清除图像块
+	}
+	cvDestroyWindow("Image:");						//关闭原图像窗口
+	cvReleaseImage(&img);							//清除原图像
+    cvReleaseImage(&copy);    						//清除内部函数复制的图像
+    return 0;
+}
+
+/* 上面就是调用这个函数进行剪切的，通过输入起始位置和图像的宽高就可以剪切你想要的部分，多通道单通道都适用哦~~*/
+IplImage *myCopyImage(IplImage* img, int Row, int Col, int Width, int Height)
+{
+	int img_Width = img->width;
+	int img_Height = img->height;
+	int img_Channel = img->nChannels;
+	printf("源图像参数：\n\t宽：%d\n\t高：%d\n\t通道数：%d\n", img_Width, img_Height, img_Channel);						//获取原图像的基本参数
+
+	if((Row<0) | (Col<0) | ((Row+Height)>img_Width) | ((Col+Width)>img_Height))
+	{
+		printf("\nError:\n\t请输入正确的起始位置和复制宽高!\n\t返回为空");
+		return NULL;
+	}								//对条件进行判断，防止错误复制
+	
+	IplImage* Block = cvCreateImage(cvSize(Width,Height),IPL_DEPTH_8U,img_Channel);
+									//创建一幅空图像
+	int b_step = Block->widthStep;
+	
+	for (int i=0;i<Height;i++)
+		for(int j=0;j<Width;j++)
+			for(int k=0;k<img_Channel;k++)
+			{
+Block->imageData[i*b_step+j*img_Channel+k] = 
+					img->imageData[(i+Row)*
+					(img->widthStep)+(j+Col)*img_Channel+k];
+}	//三次循环，将原图中所需复制的每一个像素点填充到新的图像中去
+	return Block;
+}
+
+/* 用矩阵的方式复制图像的部分或者全部，效果和上面一样，过程起始页差不多，只是里面的操作对象就是矩阵。PS：当然图像也是矩阵，要是这么看的话就无差别了~~*/
+CvMat *myCopyMat(IplImage* img, int Row, int Col, int Width, int Height)
+{
+	int img_Width = img->width;
+	int img_Height = img->height;
+	int img_Channel = img->nChannels;
+	printf("源图像参数：\n\t宽：%d\n\t高：%d\n\t通道数：%d\n", img_Width, img_Height, img_Channel);						//获取原图像的基本参数
+
+	if((Row<0) | (Col<0) | ((Row+Height)>img_Width) | ((Col+Width)>img_Height))
+	{
+		printf("\nError:\n\t请输入正确的起始位置和复制宽高!\n\t返回为空");
+		return NULL;
+	}								//对条件进行判断，防止错误复制
+	
+	CvMat *a = cvCreateMat(Height, Width, CV_MAKETYPE(CV_8U,img_Channel));
+									//创建一幅空矩阵
+	int b_step = a->step;
+	for (int i=0;i<Height;i++)
+		for(int j=0;j<Width;j++)
+			for(int k=0;k<img_Channel;k++)
+			{
+				a->data.ptr[i*b_step+j*img_Channel+k] = img->imageData[(i+Row)*
+					(img->widthStep)+(j+Col)*img_Channel+k];
+			}
+	return a;
+}
