@@ -1,0 +1,33 @@
+int main(int argc, char** argv)
+{
+
+   IplImage* src; // 定义源图像
+
+    cvNamedWindow("Example3_12_pre", CV_WINDOW_AUTOSIZE); // 创建图像显示窗口
+    cvNamedWindow("Example3_12_post", CV_WINDOW_AUTOSIZE);  
+
+    if( argc == 7 && ((src=cvLoadImage(argv[1],1)) != 0 )) // 引入源图像
+    {
+       int x = atoi(argv[2]); // atoi（）函数功能是将字符串转换为整型数
+       int y = atoi(argv[3]);
+       int width = atoi(argv[4]);
+       int height = atoi(argv[5]);
+       int add = atoi(argv[6]);
+
+cvShowImage( "Example3_12_pre", src); // 显示原图
+
+     cvSetImageROI(src, cvRect(x,y,width,height)); // 在原图上设定感兴趣区域
+    
+     cvAddS(src, cvScalar(add),src); // 把src的元素与常量add相加放到src里    
+
+     cvResetImageROI(src); // 释放感兴趣区域
+
+     cvShowImage( "Example3_12_post",src); // 显示处理后图像
+
+      cvWaitKey();
+    }
+   cvReleaseImage( &src ); //释放图像
+   cvDestroyWindow("Example3_12_pre");// 销毁窗口
+   cvDestroyWindow("Example3_12_post");   
+    return 0;
+}
