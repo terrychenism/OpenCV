@@ -27,3 +27,49 @@ int main(int argc, char** argv)
 }
 
 //use .cpp
+/////////////////
+
+#include <stdio.h>
+#include <cv.h>
+#include <highgui.h>
+
+float sum( CvMat* mat ) {
+  float s = 0.0f;
+  for( int row=0; row<mat->height; row++ ) {
+    float* ptr = mat->data.fl + row * mat->step/4;
+    for( int col=0; col<mat->width; col++ ) {
+      s += *ptr++;
+    }
+  }
+  return( s );
+};
+
+int main(int argc, char** argv)
+{
+    CvMat* mat = cvCreateMat(3,3,CV_32FC3);//矩阵元素为三通道浮点数
+ cvZero(mat);//将矩阵置0
+
+
+    //----------为矩阵元素赋值-----------------
+
+    //获得矩阵元素(0,0)的指针
+    float *p = (float*)cvPtr2D(mat, 0, 0);
+    //为矩阵赋值
+    for(int i = 0; i < 9; i++)
+    {
+        //为每个通道赋值
+        *p = (float)i*10;    
+        p++;
+        *p = (float)i*10+1;
+        p++;
+        *p = (float)i*10+2;
+        p++;
+    }
+    float s = sum(mat);
+    printf("%f\n",s);
+	getchar();
+    return 0;
+}
+
+
+
