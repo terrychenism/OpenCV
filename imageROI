@@ -42,7 +42,7 @@ int main(int argc, char** argv)
     IplImage* src;
     cvNamedWindow("Example3_12_pre", CV_WINDOW_AUTOSIZE);
     cvNamedWindow("Example3_12_post", CV_WINDOW_AUTOSIZE);  
-    if( src=cvLoadImage("lena.jpg",1) )
+    if(argc == 1 &&  (src=cvLoadImage("lena.jpg",1))!=0 )
     {
 		int x = atoi("2.45");
       int y = atoi("2.45");
