@@ -1,0 +1,28 @@
+#include <cv.h>
+#include <highgui.h>
+#include <stdio.h>
+
+int main(int argc, char** argv)
+{
+    IplImage *src1, *src2;
+    if( argc == 1 && ((src1=cvLoadImage("lena.jpg",1)) != 0 
+        )&&((src2=cvLoadImage("lena.jpg",1)) != 0 ))
+    {
+        int x = atoi("45");
+        int y = atoi("0");
+        int width = atoi("50");
+        int height = atoi("10");
+        double alpha = (double)atof("1.5");
+        double beta  = (double)atof("1.2");
+        cvSetImageROI(src1, cvRect(x,y,width,height));
+        cvSetImageROI(src2, cvRect(0,0,width,height));
+        cvAddWeighted(src1, alpha, src2, beta,0.0,src1);
+        cvResetImageROI(src1);
+        cvNamedWindow( "Alpha_blend", 1 );
+        cvShowImage( "Alpha_blend", src1 );
+        cvWaitKey();
+    }
+    else 
+      printf("Couldn't load one or both of %s, %s\n",argv[1],argv[2]);
+    return 0;
+}
