@@ -31,3 +31,10 @@ cvShowImage( "Example3_12_pre", src); // 显示原图
    cvDestroyWindow("Example3_12_post");   
     return 0;
 }
+
+///////////////////
+int x = atoi("2.45");
+int y = atoi("2.45");
+int width = atoi("10.56");
+int height = atoi("5.78");
+int add = atoi("150");
