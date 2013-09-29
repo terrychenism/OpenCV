@@ -1,0 +1,38 @@
+#include "highgui.h"
+#include <cstdio>
+
+int main()
+{
+    IplImage *image = cvLoadImage("lena.jpg");//加载图像
+    if(image == NULL)
+    {//加载图像失败
+        printf("加载图像出错！\n");
+        return 1;
+    }
+    cvNamedWindow("读取和修改图像数据");//创建一个命名窗口
+
+    uchar *pchar;
+    int width = image->width;//读取图像宽度
+    int height = image->height;//读取图像高度
+    int channel = image->nChannels;//读取图像通道数
+    int widthStep = image->widthStep;//读取图像一行像素的字节数
+
+    int i, j;
+    for(i = 0; i < height; ++i)
+    {
+        pchar = (uchar*)image->imageData + i * widthStep;
+        for(j = 0; j < width; ++j)
+        {
+            uchar *temp = pchar + j * channel;
+            temp[0] += 50;//通道B
+            temp[1] += 50;//通道G
+            temp[2] += 50;//通道R
+        }
+    }
+
+    cvShowImage("读取和修改图像数据", image);
+    cvWaitKey(0);
+    cvReleaseImage(&image);
+    cvDestroyWindow("读取和修改图像数据");
+    return 0;
+}
