@@ -1,0 +1,56 @@
+#include <cv.h>
+#include <highgui.h>
+#include <cstdio>
+
+int main()
+{
+    CvMat *mat = cvCreateMat(3, 3, CV_32SC1);
+    CvMat *mask = cvCreateMat(3, 3, CV_8UC1);
+
+    /*初始化矩阵mat*/
+    for(int i = 0; i < mat->height; ++i)
+    {
+        int *ptr = (int*)(mat->data.ptr + mat->step * i);
+        for(int j = 0; j < mat->width; ++j)
+        {
+            *(ptr + j) = j;
+        }
+    }
+    
+    /*初始化掩模mask*/
+    for(int i = 0; i < mask->height; ++i)
+    {
+        uchar *ptr = mask->data.ptr + mask->step * i;
+        for(int j = 0; j < mask->width; ++j)
+        {
+            if(j >= i)
+                *(ptr + j) = 1;
+            else
+                *(ptr + j) = 0;
+        }
+    }
+    printf("mat的值：\n");
+    for(int i = 0; i < mat->height; ++i)
+    {
+        int *ptr = (int*)(mat->data.ptr + mat->step * i);
+        for(int j = 0; j < mat->width; ++j)
+        {
+            printf("%d ", *(ptr + j));
+        }
+        printf("\n");
+    }
+
+    /*mat的均值*/
+    CvScalar avg = cvAvg(mat);
+    printf("mat的均值：\n");
+    printf("%lf\n", avg.val[0]);/*注意CvScalar的成员是double*/
+
+    /*使用掩模mask，使得只有相应的mask为1时，mat中相应的值才列入均值计算*/
+    avg = cvAvg(mat, mask);
+    printf("使用掩模mask（只求上三角）后，mat的均值：\n");
+    printf("%lf\n", avg.val[0]);/*注意CvScalar的成员是double*/
+	getchar();
+    cvReleaseMat(&mat);
+    cvReleaseMat(&mask);
+    return 0;
+}
