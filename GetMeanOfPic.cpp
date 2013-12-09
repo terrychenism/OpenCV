@@ -1,0 +1,104 @@
+#include <opencv2\opencv.hpp>  
+#include<iostream>
+using namespace cv;
+using namespace std;
+char filename[1000];
+
+//void getMean(IplImage *src)
+//{
+//	int height, width;
+//	uchar** ImageData;
+//	uchar* data;
+//		height = src->height;
+//		width = src->width;
+//		
+//		cout << "This image has " << width << " by " << height << " pixels." << endl;
+//		cvGetRawData(src, (uchar**)&data);
+//		ImageData = new uchar* [height];
+//		for(int i = 0; i < height; i++)
+//		{
+//			ImageData[i] = new uchar [width];
+//		}
+//		//Calculate the mean of the image
+//		double total = 0;
+//		for (int i = 0; i < height; i++)
+//		{
+//			for (int j = 0; j < width; j++)
+//			{
+//				//total += ImageData[i][j];
+//				total += data[width*src->width + height];
+//			}
+//		}
+//		double mean = (total/ (height * width));
+//		cout << "Mean: " << mean  << endl;
+//	
+//}
+
+void main()
+{
+	IplImage *src;
+	int height, width;
+		uchar** ImageData;
+	uchar* data;
+	int count=0;
+	for(int i=1;i<=300;i++)
+	 {
+	  sprintf(filename,"C:/Users/hzhou/Desktop/RGB/photo1/%d.jpg",i);
+	  IplImage* src = cvLoadImage(filename);
+	  /*cvNamedWindow("lena",CV_WINDOW_AUTOSIZE);
+
+		CvSize s = cvSize(src->width, src->height);
+		int d = src->depth;
+		IplImage* R = cvCreateImage(s, d, 1);
+		IplImage* G = cvCreateImage(s, d, 1);
+		IplImage* B = cvCreateImage(s, d, 1);
+		cvSplit(src, R, G, B, NULL);
+
+
+		getMean(src);
+		getMean(R);
+		getMean(G);
+		getMean(B);*/
+
+		height = src->height;
+		width = src->width;
+		
+		cout << "This image has " << width << " by " << height << " pixels." << endl;
+		cvGetRawData(src, (uchar**)&data);
+		ImageData = new uchar* [height];
+		for(int i = 0; i < height; i++)
+		{
+			ImageData[i] = new uchar [width];
+		}
+		//Calculate the mean of the image
+		double total = 0;
+		for (int i = 0; i < height; i++)
+		{
+			for (int j = 0; j < width; j++)
+			{
+				//total += ImageData[i][j];
+				total += data[width*src->width + height];
+			}
+		}
+		double mean = (total/ (height * width));
+		if(mean==0){
+			count++;
+		}
+		cout << "Mean: " << mean  << endl;
+		
+		cvWaitKey(0);
+		cvReleaseImage( &src );
+		
+	 }
+	//src = cvLoadImage("lena.jpg"); 
+	cout << "heartrate: " << count  << endl;
+	getchar();
+
+	
+	//cvShowImage("lena",src);
+
+	//cvWaitKey(0);
+	//cvDestroyWindow("lena");
+
+	//cvReleaseImage(&src);
+}
