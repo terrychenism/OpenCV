@@ -1,4 +1,3 @@
-
 #include <complex>
 #include <opencv2\opencv.hpp>  
 #include<iostream>
@@ -80,7 +79,7 @@ void main()
 	Complex beat[1500];
 	for(int i=1;i<=1500;i++)
 	 {
-	  sprintf(filename,"C:/Users/hzhou/Desktop/RGB/photo1/%d.jpg",i);
+	  sprintf(filename,"../photo1/%d.jpg",i);
 	  IplImage* src = cvLoadImage(filename);
 	  /*cvNamedWindow("lena",CV_WINDOW_AUTOSIZE);
 
