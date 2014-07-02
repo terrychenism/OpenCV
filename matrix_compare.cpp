@@ -11,15 +11,15 @@ int main(int argc, char * argv[]){
 	int a[12] = {1,2,23,34,5,6,6,7,7,78,16,76};
 	cout<<a[2]<<endl;
 
-	int r=1;
-	int c=12;
+	
 
 	std::vector<float> box1;
 	for(int i = 0; i<12;i++){
 		 box1.push_back(a[i]);
 	}
 
-
+	int r=1;
+	int c=box1.size();
 	cout<<box1.front()<<endl;
 
 	//create Mat
